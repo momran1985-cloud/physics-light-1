@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة اختبار أساسيات الضوء - فيزياء 3 ثانوي</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-effect {
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
+        }
+        .glow-effect:hover {
+            box-shadow: 0 0 35px rgba(59, 130, 246, 0.45);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
+
+    <!-- Header Section -->
+    <header class="glass-panel sticky top-0 z-50 border-b border-slate-700/50">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <div class="bg-gradient-to-tr from-cyan-500 to-blue-600 p-3 rounded-2xl text-white shadow-lg shadow-cyan-500/20">
+                    <i class="fa-solid font-bold fa-lightbulb text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-300 bg-clip-text text-transparent">
+                        منصة اختبار أساسيات الضوء
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">فيزياء الصف الثالث الثانوي - الفصل الرابع</p>
+                </div>
+            </div>
+
+            <!-- Teacher Badge & Quick Tools -->
+            <div class="flex items-center gap-3">
+                <div class="glass-panel px-4 py-2 rounded-xl border border-cyan-500/30 flex items-center gap-3 bg-slate-800/80">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center text-slate-900 font-bold shadow-md">
+                        <i class="fa-solid fa-user-tie text-sm"></i>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-[10px] text-slate-400 font-bold tracking-wider">المعلم المتابع</span>
+                        <span class="text-sm font-extrabold text-amber-400">أ. محمد عمران</span>
+                    </div>
+                </div>
+
+                <button onclick="toggleCalculatorModal()" class="p-2.5 glass-panel hover:bg-slate-700 text-cyan-400 hover:text-cyan-300 rounded-xl transition duration-200 border border-slate-700" title="الحاسبة التفاعلية">
+                    <i class="fa-solid fa-calculator text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- Navigation Tabs / Parts Selection -->
+        <div class="mb-8 overflow-x-auto pb-2">
+            <div class="flex space-x-2 space-x-reverse min-w-max bg-slate-800/60 p-1.5 rounded-2xl border border-slate-700/50" id="partsTabContainer">
+                <!-- Tabs injected dynamically -->
+            </div>
+        </div>
+
+        <!-- Section Title & Description -->
+        <div class="glass-panel p-6 rounded-3xl mb-8 border border-slate-700/50 shadow-xl relative overflow-hidden">
+            <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 id="currentPartTitle" class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                        <!-- Part title injected dynamically -->
+                    </h2>
+                    <p id="currentPartDesc" class="text-sm text-slate-400">
+                        <!-- Part description injected dynamically -->
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 bg-slate-900/60 px-5 py-3 rounded-2xl border border-slate-800">
+                    <div class="text-center">
+                        <span class="block text-xs text-slate-400">عدد الأسئلة</span>
+                        <span id="partQuestionCount" class="text-lg font-bold text-cyan-400">20</span>
+                    </div>
+                    <div class="w-px h-8 bg-slate-700"></div>
+                    <div class="text-center">
+                        <span class="block text-xs text-slate-400">الدرجة المحرزة</span>
+                        <span id="partScoreDisplay" class="text-lg font-bold text-emerald-400">0 / 20</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quizContainer" class="space-y-6">
+            <!-- Questions cards injected dynamically -->
+        </div>
+
+        <!-- Summary & Score Controls -->
+        <div class="mt-12 glass-panel p-8 rounded-3xl border border-slate-700/50 text-center relative overflow-hidden">
+            <div class="max-w-2xl mx-auto space-y-4">
+                <h3 class="text-2xl font-extrabold text-white">إحصائيات التقدم الشامل</h3>
+                <p class="text-slate-400 text-sm">اجب على جميع الأسئلة للتعلم والحصول على التغذية הراجعة والشرح المباشر لكافة المسائل والقوانين.</p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4">
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="block text-xs text-slate-400 mb-1">الأسئلة المجابة</span>
+                        <span id="totalAnswered" class="text-2xl font-black text-cyan-400">0 / 120</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="block text-xs text-slate-400 mb-1">الإجابات الصحيحة</span>
+                        <span id="totalCorrect" class="text-2xl font-black text-emerald-400">0</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="block text-xs text-slate-400 mb-1">الإجابات الخاطئة</span>
+                        <span id="totalWrong" class="text-2xl font-black text-rose-400">0</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="block text-xs text-slate-400 mb-1">النسبة المئوية</span>
+                        <span id="totalPercentage" class="text-2xl font-black text-amber-400">0%</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-center gap-4 pt-2">
+                    <button onclick="resetCurrentPart()" class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold transition duration-200 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> إعادة محاولة هذا الجزء
+                    </button>
+                    <button onclick="resetAllQuiz()" class="px-6 py-3 bg-rose-600/80 hover:bg-rose-600 text-white rounded-xl font-bold transition duration-200 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-trash-can"></i> إعادة تصفير كافة الأجزاء
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Interactive Optics Calculator Modal -->
+    <div id="calculatorModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-lg w-full rounded-3xl border border-slate-700 p-6 shadow-2xl relative">
+            <button onclick="toggleCalculatorModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white p-2 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-bold text-cyan-400 mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-calculator"></i> حاسبة قوانين الضوء واستضاءتها
+            </h3>
+            <p class="text-xs text-slate-400 mb-6">احسب الاستضاءة $E$ أو التدفق الضوئي $P$ أو التغير في الطول الموجي $\Delta \lambda$ بسهولة.</p>
+
+            <!-- Calculator Type Selection -->
+            <div class="flex gap-2 mb-6 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+                <button id="calcIllumBtn" onclick="switchCalcMode('illumination')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-cyan-500 text-slate-900 shadow">قانون الاستضاءة E</button>
+                <button id="calcDopplerBtn" onclick="switchCalcMode('doppler')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white">تأثير دوبلر Δλ</button>
+            </div>
+
+            <!-- Illumination Calculator Form -->
+            <div id="illumForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">التدفق الضوئي (P) باللومن lm</label>
+                    <input type="number" id="calcP" placeholder="مثال: 1600" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">البعد العمودي عن المصدر (r) بالمتر m</label>
+                    <input type="number" id="calcR" placeholder="مثال: 2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <button onclick="calculateIllumination()" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-900 font-extrabold rounded-xl shadow-lg hover:brightness-110 transition">احسب الاستضاءة (E)</button>
+                <div id="illumResult" class="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-center font-bold text-emerald-400 text-sm hidden">
+                    <!-- Result -->
+                </div>
+            </div>
+
+            <!-- Doppler Calculator Form -->
+            <div id="dopplerForm" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">الطول الموجي الاصلي (λ) بالنانومتر nm</label>
+                    <input type="number" id="calcLambda" placeholder="مثال: 500" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">السرعة النسبية (v) بـ m/s</label>
+                    <input type="number" id="calcV" placeholder="مثال: 3000000" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <button onclick="calculateDoppler()" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-900 font-extrabold rounded-xl shadow-lg hover:brightness-110 transition">احسب التغير Δλ</button>
+                <div id="dopplerResult" class="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-center font-bold text-emerald-400 text-sm hidden">
+                    <!-- Result -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>© 2026 جميع الحقوق محفوظة - منصة فيزياء 3 ثانوي (الفصل الرابع: أساسيات الضوء)</p>
+            <p class="text-amber-400 font-semibold"><i class="fa-solid fa-graduation-cap ml-1"></i> إشراف ومتابعة: أ. محمد عمران</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+        // Quiz Data - 120 Questions across 6 Parts
+        // Part 1 includes Questions 1 to 15 directly matching the user's provided book images!
+        const quizParts = [
+            {
+                id: 1,
+                title: "الجزء الأول: أساسيات البصريات واستضاءة الضوء",
+                description: "يتضمن هذا الجزء الأسئلة الـ 15 الموضحة في صور المستند مع التوضيح الكامل للقوانين والشرح المفصل.",
+                questions: [
+                    {
+                        id: 1,
+                        question: "العلم الذي يدرس الضوء باعتباره شعاعًا ضوئيًا بغض النظر عن كون الضوء جسيمًا أو موجة هو:",
+                        options: ["ميكانيكا الكم", "البصريات", "الفيزياء النسبية", "فيزياء الليزر"],
+                        correct: 1,
+                        explanation: "البصريات الهندسيّة هي طريقة لدراسة تفاعل الضوء مع المادة بغض النظر عما إذا كان الضوء جسيماً أو موجة."
+                    },
+                    {
+                        id: 2,
+                        question: "أوجد الاستضاءة بوحدة اللوكس (lx) على مسافة 2m أسفل مصباح تدفقه الضوئي 1600 lm:",
+                        options: ["100/π", "200/π", "100π", "200π"],
+                        correct: 0,
+                        explanation: "قانون الاستضاءة: E = P / (4 * π * r²). بتعويض P = 1600 و r = 2: E = 1600 / (4 * π * 2²) = 1600 / (16 * π) = 100 / π lux."
+                    },
+                    {
+                        id: 3,
+                        question: "معدل انبعاث طاقة الضوء من المصدر المضيء يسمى:",
+                        options: ["الاستضاءة", "الاستقطاب", "التدفق الضوئي", "الحيود"],
+                        correct: 2,
+                        explanation: "التدفق الضوئي (P) هو معدل انبعاث طاقة الضوء من المصدر المضيء، وتقاس بوحدة اللومن (lm)."
+                    },
+                    {
+                        id: 4,
+                        question: "تستخدم وحدة اللومن (lm) لقياس:",
+                        options: ["الاستقطاب", "شدة الإضاءة", "الاستضاءة", "التدفق الضوئي"],
+                        correct: 3,
+                        explanation: "وحدة اللومن (lm) هي وحدة قياس التدفق الضوئي (P)."
+                    },
+                    {
+                        id: 5,
+                        question: "إذا اعتبرنا أن P التدفق الضوئي لمصدر ضوئي، و r البعد العمودي بين المصدر والسطح؛ فإن الاستضاءة E تتناسب:",
+                        options: ["طرديًا مع P و r²", "عكسيًا مع P و r²", "طرديًا مع P وعكسيًا مع r²", "عكسيًا مع P وطرديًا مع r²"],
+                        correct: 2,
+                        explanation: "حسب القانون E = P / (4πr²)، تتناسب الاستضاءة طردياً مع التدفق الضوئي P وعكسياً مع مربع البعد r²."
+                    },
+                    {
+                        id: 6,
+                        question: "السنة الضوئية تُعبر عن:",
+                        options: ["مسافة", "شدة", "سرعة", "زمن"],
+                        correct: 0,
+                        explanation: "السنة الضوئية هي المسافة التي يقطعها الضوء في السنة بفرغ السرعة c = 3×10⁸ m/s."
+                    },
+                    {
+                        id: 7,
+                        question: "أول من أكد أن للضوء سرعة محددة من خلال رصده لأحد أقمار كوكب المشتري هو العالم:",
+                        options: ["جاليليو", "ميكلسون", "رومر", "نيوتن"],
+                        correct: 2,
+                        explanation: "العالم الفلكي الدنماركي أولاف رومر هو أول من أكد أن الضوء ينتقل بسرعه يمكن قياسها."
+                    },
+                    {
+                        id: 8,
+                        question: "طبقًا للشكل والذي يمثل الطيف المرئي، فإنه في نفس اتجاه السهم (من البنفسجي إلى الأحمر):",
+                        options: ["يقل الطول الموجي ويزداد التردد", "يزداد الطول الموجي ويقل التردد", "يزداد التردد والطول الموجي", "يقل التردد والطول الموجي"],
+                        correct: 1,
+                        explanation: "عند الانتقال من اللون البنفسجي إلى اللون الأحمر يزداد الطول الموجي (الأحمر أطولها موجه) ويقل التردد لأن العلاقة عكسية."
+                    },
+                    {
+                        id: 9,
+                        question: "ناتج مزج اللونين الأخضر والأحمر هو اللون:",
+                        options: ["الأزرق", "الأبيض", "البنفسجي", "الأصفر"],
+                        correct: 3,
+                        explanation: "الأحمر والأخضر والأزرق هي ألوان أساسية ضوئية. مزج الأحمر + الأخضر = الأصفر (وهو لون ثانوي)."
+                    },
+                    {
+                        id: 10,
+                        question: "في الشكل (تداخل ألوان الضوء) أي موضع يُمثل اللون الأزرق الفاتح؟",
+                        options: ["1", "2", "3", "4"],
+                        correct: 2,
+                        explanation: "المنطقة رقم (3) تنشأ من تداخل الضوء الأخضر مع الضوء الأزرق، مما ينتج اللون الأزرق الفاتح (Cyan)."
+                    },
+                    {
+                        id: 11,
+                        question: "اللون المتمم للون الأصفر هو:",
+                        options: ["الأزرق", "الأخضر", "الأحمر", "الأبيض"],
+                        correct: 0,
+                        explanation: "اللون المتمم هو لون يتراكب مع لون آخر لإنتاج الضوء الأبيض. الأصفر يتكون من (أحمر+أخضر)، لذا متممه هو الأزرق."
+                    },
+                    {
+                        id: 12,
+                        question: "إذا سلطنا ضوءًا أزرق على خيارة خضراء فماذا سيصبح لون الخيارة؟",
+                        options: ["أحمر", "أزرق", "أسود", "أخضر"],
+                        correct: 2,
+                        explanation: "الخيارة الخضراء تمتص الضوء الأزرق ولا تعكسه، وبالتالي لن ينعكس أي ضوء إلى العين فتظهر باللون الأسود."
+                    },
+                    {
+                        id: 13,
+                        question: "إذا كانت λ الطول الموجي و c سرعة الضوء و v السرعة النسبية للمصدر والمراقب؛ فإن قانون إزاحة دوبلر إذا تحرك المراقب والمصدر مبتعدين يُعطى بالعلاقة:",
+                        options: ["Δλ = (v/c)λ", "Δλ = (c/v)λ", "Δλ = -(c/v)λ", "Δλ = -(v/c)λ"],
+                        correct: 0,
+                        explanation: "عند الابتعاد يزداد الطول الموجي فتكون إشارة إزاحة دوبلر Δλ موجبة وتساوي + (v/c)λ."
+                    },
+                    {
+                        id: 14,
+                        question: "الاستقطاب هو إنتاج ضوء يتذبذب في:",
+                        options: ["مستوى واحد", "مستويين متعامدين", "مستويات مترابطة", "مستويين متوازيين"],
+                        correct: 0,
+                        explanation: "تعريف الاستقطاب: إنتاج ضوء يتذبذب في مستوى واحد فقط باستخدام مرشحات الاستقطاب."
+                    },
+                    {
+                        id: 15,
+                        question: "يستفيد العلماء من استقطاب الضوء في:",
+                        options: ["رفع شدته", "الحيود", "خفض شدته", "التداخل"],
+                        correct: 2,
+                        explanation: "من الاستخدامات العملية لمرشحات الاستقطاب (مثل النظارات الشمسية) خفض شدة الضوء والوهج."
+                    },
+                    // Expanding Part 1 to 20 Questions with high quality optics physics questions
+                    {
+                        id: 16,
+                        question: "وحدة قياس الاستضاءة E في النظام الدولي وحدات (SI) هي:",
+                        options: ["اللوكس (lx)", "اللومن (lm)", "الكانديلا (cd)", "الواط (W)"],
+                        correct: 0,
+                        explanation: "تقاس الاستضاءة بوحدة اللوكس lx وتساوي lm/m²."
+                    },
+                    {
+                        id: 17,
+                        question: "إذا تضاعف البعد بين مصدر ضوئي وسطيح إلى المثلين (2r)، فإن الاستضاءة E تتغير لتصبح:",
+                        options: ["ضعف ما كانت عليه", "نصف ما كانت عليه", "ربع ما كانت عليه", "أربعة أضعاف"],
+                        correct: 2,
+                        explanation: "وفقاً لقانون التربيع العكسي E ∝ 1/r²، فعند مضاعفة المسافة 2x تقل الاستضاءة للربع (1/4)."
+                    },
+                    {
+                        id: 18,
+                        question: "مصدر ضوئي شدة إضاءته 1cd، كم يكون تدفقه الضوئي الكلي؟",
+                        options: ["π lm", "2π lm", "4π lm", "1 lm"],
+                        correct: 2,
+                        explanation: "شدة الإضاءة I = P / 4π، وبالتالي فإن P = 4π × I = 4π lm."
+                    },
+                    {
+                        id: 19,
+                        question: "الأجسام التي تُصدر ضوءًا من ذاتها كالشمس والمصابيح تُسمى أجسامًا:",
+                        options: ["مستضيئة", "مضيئة", "شفافة", "شبه شفافة"],
+                        correct: 1,
+                        explanation: "المصدر المضيء هو الذي يبعث الضوء من ذاته مثل الشمس والشرارة والضوء."
+                    },
+                    {
+                        id: 20,
+                        question: "المادة التي تنقل الضوء وتسمح للأجسام أن تُرى بوضوح من خلالها تُسمى مادة:",
+                        options: ["معتمة", "شبه شفافة", "شفافة", "مستقطبة"],
+                        correct: 2,
+                        explanation: "المواد الشفافة مثل الهواء والزجاج الصافي تسمح بمرور الضوء ورؤية الأجسام بوضوح خلفها."
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "الجزء الثاني: الطبيعة الموجية للضوء والألوان",
+                description: "تداخل الألوان الضوئية الأساسية والثانوية والمتممة، والألوان بالصبغات والفلترة.",
+                questions: [
+                    {
+                        id: 21,
+                        question: "أي من الألوان التالية يُعد لونًا أساسياً للضوء؟",
+                        options: ["الأصفر", "الأرجواني", "الأزرق الفاتح", "الأخضر"],
+                        correct: 3,
+                        explanation: "الألوان الأساسية للضوء هي: الأحمر، الأخضر، والأزرق."
+                    },
+                    {
+                        id: 22,
+                        question: "عند تراكب الألوان الضوئية الأساسية الثلاثة (الأحمر والأخضر والأزرق) بالشدة نفسها يتكون الضوء:",
+                        options: ["الأسود", "الأبيض", "الرمادي", "الأصفر"],
+                        correct: 1,
+                        explanation: "مزج الألوان الضوئية الأساسية الثلاثة بنسب متساوية يُنتج الضوء الأبيض."
+                    },
+                    {
+                        id: 23,
+                        question: "اللون الثانوي الذي يتكون من مزج الضوء الأحمر والضوء الأزرق هو:",
+                        options: ["الأرجواني (Magenta)", "الأصفر", "الأزرق الفاتح", "البرتقالي"],
+                        correct: 0,
+                        explanation: "مزج ضوء أحمر + ضوء أزرق يُعطي اللون الأرجواني."
+                    },
+                    {
+                        id: 24,
+                        question: "الصبغات الأساسية تعمل على امتصاص لون أساسي واحد وتعكس لونين، ومن أمثلتها:",
+                        options: ["الأحمر", "الأصفر", "الأزرق", "الأخضر"],
+                        correct: 1,
+                        explanation: "الصبغات الأساسية هي: الأصفر، والأرجواني، والأزرق الفاتح."
+                    },
+                    {
+                        id: 25,
+                        question: "اللون المتمم للون الأرجواني (Magenta) هو:",
+                        options: ["الأحمر", "الأزرق", "الأخضر", "الأصفر"],
+                        correct: 2,
+                        explanation: "الأرجواني يتكون من أحمر وأزرق، واللون الأساسي المتبقي لإنتاج الأبيض هو الأخضر."
+                    },
+                    {
+                        id: 26,
+                        question: "ماذا يسمى لون الصبغة الذي يمتص لونين أساسيين ويعكس لوناً واحداً؟",
+                        options: ["صبغة أساسية", "صبغة ثانوية", "صبغة متممة", "صبغة بيضاء"],
+                        correct: 1,
+                        explanation: "الصبغة الثانوية تمتص لونين أساسيين وتعكس لوناً أساسياً واحداً فقط."
+                    },
+                    {
+                        id: 27,
+                        question: "أي الصبغات التالية تُعد صبغة ثانوية؟",
+                        options: ["الأصفر", "الأزرق الفاتح", "الأحمر", "الأرجواني"],
+                        correct: 2,
+                        explanation: "الصبغات الثانوية هي: الأحمر، الأخضر، والأزرق."
+                    },
+                    {
+                        id: 28,
+                        question: "عند مزج الصبغات الأساسية الثلاث (الأصفر، الأرجواني، الأزرق الفاتح) معاً ينشأ اللون:",
+                        options: ["الأبيض", "الأسود", "الرمادي", "البني"],
+                        correct: 1,
+                        explanation: "خلط الصبغات هو عملية طرح للألوان، وتؤدي إضافة الصبغات الثلاث معاً إلى امتصاص كافة الألوان وظهور اللون الأسود."
+                    },
+                    {
+                        id: 29,
+                        question: "يبدو قميص باللون الأحمر لأنه:",
+                        options: ["يمتص اللون الأحمر ويعكس باقي الألوان", "يعكس اللون الأحمر ويمتص باقي الألوان", "ينتج اللون الأحمر من ذاته", "كسر الضوء الأبيض"],
+                        correct: 1,
+                        explanation: "الأجسام الملونة تعكس طول موجة لونها وتمتص باقي أطوال الموجات."
+                    },
+                    {
+                        id: 30,
+                        question: "عند النظر إلى وردة حمراء عبر لوح زجاجي أخضر شفاف، ستظهر الوردة باللون:",
+                        options: ["الأحمر", "الأخضر", "الأسود", "الأصفر"],
+                        correct: 2,
+                        explanation: "الوردة تعكس الضوء الأحمر فقط، واللوح الأخضر يمتص الأحمر ولا يمرره، فتظهر باللون الأسود."
+                    },
+                    {
+                        id: 31,
+                        question: "أي ألوان الضوء المرئي التالية يمتلك أطول طول موجي؟",
+                        options: ["البنفسجي", "الأزرق", "الأصفر", "الأحمر"],
+                        correct: 3,
+                        explanation: "الضوء الأحمر يمتلك أكبر طول موجي في الطيف المرئي (حوالي 700nm)."
+                    },
+                    {
+                        id: 32,
+                        question: "أي ألوان الضوء المرئي التالية يمتلك أعلى تردد وأعلى طاقة؟",
+                        options: ["الأحمر", "البرتقالي", "الأخضر", "البنفسجي"],
+                        correct: 3,
+                        explanation: "الضوء البنفسجي يمتلك أقصر طول موجي وبالتالي أعلى تردد وطاقة."
+                    },
+                    {
+                        id: 33,
+                        question: "نطاق الأطوال الموجية للضوء المرئي المحصور بين:",
+                        options: ["100nm - 300nm", "400nm - 700nm", "700nm - 1000nm", "1nm - 10nm"],
+                        correct: 1,
+                        explanation: "يتراوح الطول الموجي للضوء المرئي بين 400 نانومتر (البنفسجي) و 700 نانومتر (الأحمر)."
+                    },
+                    {
+                        id: 34,
+                        question: "الضوء الذي يتكون من موجات ذات طول موجي واحد فقط يُسمى ضوءًا:",
+                        options: ["غير مترابط", "أحادي اللون", "مستقطباً", "مركباً"],
+                        correct: 1,
+                        explanation: "الضوء أحادي اللون يحتوي على طول موجي محدد بوضوح."
+                    },
+                    {
+                        id: 35,
+                        question: "تحليل الضوء الأبيض بواسطة المنشور الزجاجي يعتمد على خاصية:",
+                        options: ["الاستقطاب", "انكسار الضوء واختلاف سرعته حسب الطول الموجي", "الحيود", "التداخل"],
+                        correct: 1,
+                        explanation: "ينكسر كل لون بدرجة مختلفة داخل المنشور بناءً على طوله الموجي وسرعته."
+                    },
+                    {
+                        id: 36,
+                        question: "ظاهرة قوس المطر في السماء تحدث بفضل:",
+                        options: ["انعكاس وانكسار الضوء داخل قطرات الماء", "حيود الضوء في الهواء", "استقطاب ضوء الشمس", "تداخل موجات الضوء"],
+                        correct: 0,
+                        explanation: "تعمل قطرات المطر كالمناشير حيث تنكسر ألوان الضوء وتنعكس داخلياً ثم تنكسر خارجة لتشكل قوس المطر."
+                    },
+                    {
+                        id: 37,
+                        question: "اللون المتمم للون الأزرق الفاتح (Cyan) هو:",
+                        options: ["الأخضر", "الأحمر", "الأزرق", "الأصفر"],
+                        correct: 1,
+                        explanation: "الأزرق الفاتح يتكون من (أخضر + أزرق)، ولإكمال الضوء الأبيض يلزم اللون الأحمر."
+                    },
+                    {
+                        id: 38,
+                        question: "تُعرف عملية تجميع ألوان الضوء للحصول على ألوان جديدة باسم:",
+                        options: ["الألوان بالتراكب (الإضافة)", "الألوان بالطرح", "الاستقطاب", "الحيود"],
+                        correct: 0,
+                        explanation: "مزج الضوء يسمى خلط الألوان بالإصافة (Additive Color Mix)."
+                    },
+                    {
+                        id: 39,
+                        question: "طرح الألوان يحدث عند:",
+                        options: ["تجميع أضواء ملونة", "مزج الصبغات والمواد الملونة", "استقطاب الضوء", "زيادة شدة الإضاءة"],
+                        correct: 1,
+                        explanation: "خلط الصبغات يمتص (يطرح) ألواناً من الضوء الأبيض الساقط عليها."
+                    },
+                    {
+                        id: 40,
+                        question: "المستقبلات الضوئية في عين الإنسان المسؤولة عن رؤية الألوان هي:",
+                        options: ["العصي (Rods)", "الخلايا المخروطية (Cones)", "شبكية العين", "العدسة"],
+                        correct: 1,
+                        explanation: "الخلايا المخروطية حساسه للألوان (حمراء، خضراء، وزرقاء)."
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "الجزء الثالث: تأثير دوبلر للضوء وحركة المصادر",
+                description: "قوانين دوبلر للضوء، انزياح الطيف نحو الأحمر والنحوه الأزرق، واستخداماته الفلكية.",
+                questions: [
+                    {
+                        id: 41,
+                        question: "معادلة تأثير دوبلر للتردد المراقب عند تحرك المصدر والمراقب مقتربين هي:",
+                        options: ["f_observed = f (1 + v/c)", "f_observed = f (1 - v/c)", "f_observed = f / (1 + v/c)", "f_observed = f (v/c)"],
+                        correct: 0,
+                        explanation: "عند الاقتراب يزداد التردد المراقب فيكون التعبير المضروب (1 + v/c)."
+                    },
+                    {
+                        id: 42,
+                        question: "عندما يتحرك مجرة بعيداً عن الأرض، فإن أطياف الضوء الصادرة منها تنزاح نحو:",
+                        options: ["اللون الأزرق", "اللون الأحمر", "اللون الأخضر", "اللون الأشعة فوق البنفسجية"],
+                        correct: 1,
+                        explanation: "الابتعاد يؤدي إلى زيادة الطول الموجي، وهو ما يُعرف بالانزياح نحو الأحمر (Red Shift)."
+                    },
+                    {
+                        id: 43,
+                        question: "إشارة التغير في الطول الموجي Δλ تكون سالبة (-) عندما يكون المصدر والمراقب:",
+                        options: ["مبتعدين عن بعضهما", "مقتربين من بعضهما", "ساكنين بالنسبة لبعضهما", "في مسار متسامت"],
+                        correct: 1,
+                        explanation: "عند الاقتراب يقل الطول الموجي فتكون الإشارة سالبة (-)."
+                    },
+                    {
+                        id: 44,
+                        question: "استنتج الفلكيون أن الكون في حالة اتساع وتمدد استناداً إلى انزياح أطياف المجرات نحو:",
+                        options: ["الأزرق", "الأحمر", "الأصفر", "البنفسجي"],
+                        correct: 1,
+                        explanation: "ظاهرة الانزياح نحو الأحمر للمجرات البعيدة أثبتت ابتعدها منا وتمدد الكون."
+                    },
+                    {
+                        id: 45,
+                        question: "سرعة الضوء c في الفراغ تساوي تقريبًا:",
+                        options: ["3 × 10⁸ m/s", "3 × 10⁶ m/s", "300,000 m/s", "3 × 10¹⁰ m/s"],
+                        correct: 0,
+                        explanation: "سرعة الضوء في الفراغ ثابتة وتساوي c = 3 × 10⁸ م/ث."
+                    },
+                    {
+                        id: 46,
+                        question: "إذا كان التغير في الطول الموجي Δλ لشعاع ضوئي موجبًا، فهذا يعني أن الطول الموجي المراقب:",
+                        options: ["أكبر من الطول الموجي الأصلي", "أصغر من الطول الموجي الأصلي", "مساوٍ للطول الموجي الأصلي", "ينعدم"],
+                        correct: 0,
+                        explanation: "Δλ = λ_مراقب - λ_حقيقي. الإشارة الموجبة تعني أن الطول الموجي المقاس أكبر."
+                    },
+                    {
+                        id: 47,
+                        question: "العلاقة بين التردد f والطول الموجي λ للضوء في الفراغ هي علاقة:",
+                        options: ["طردية (c = f / λ)", "عكسية (c = f × λ)", "لا توجد علاقة", "تربيعية"],
+                        correct: 1,
+                        explanation: "سرعة الضوء ثابتة c = f × λ، ولذا فإن التردد يتناسب عكسياً مع الطول الموجي."
+                    },
+                    {
+                        id: 48,
+                        question: "نجم يتحرك نحو الأرض بسرعة v، التردد الذي يستقبله المراقب على الأرض سيكون:",
+                        options: ["أقل من تردد المصدر الأصلي", "أعلى من تردد المصدر الأصلي", "مساويًا لتردد المصدر", "صفرًا"],
+                        correct: 1,
+                        explanation: "عند اقتراب النجم يزداد التردد المراقب (انزياح نحو الأزرق)."
+                    },
+                    {
+                        id: 49,
+                        question: "إذا كانت السرعة النسبية v بين المصدر والمراقب مهملة بالنسبة لسرعة الضوء (v << c)، فإن معادلة دوبلر تكون:",
+                        options: ["تقريبية دقيقة", "غير صالحة", "تُعطي نتائج خاطئة", "معقدة جداً"],
+                        correct: 0,
+                        explanation: "تستخدم معادلات التبسيط مثل f_obs = f (1 ± v/c) عندما تكون v << c."
+                    },
+                    {
+                        id: 50,
+                        question: "ما مقدار إزاحة دوبلر Δλ لضوء طوله الموجي 600nm صادر من نجم يبتعد بسرعة 3000 km/s؟",
+                        options: ["6 nm", "60 nm", "0.6 nm", "600 nm"],
+                        correct: 0,
+                        explanation: "Δλ = (v/c) * λ = (3×10⁶ / 3×10⁸) * 600nm = 0.01 * 600 = 6 nm."
+                    },
+                    {
+                        id: 51,
+                        question: "أحد استخدامات تأثير دوبلر في الحياة العملية والطبية والتكنولوجية:",
+                        options: ["رادارات السرعة وتحديد حركة الأجرام والتدفق الدموي", "تصنيع العدسات المكبرة", "إنتاج الضوء الأبيض", "توليد الطاقة الشمسية"],
+                        correct: 0,
+                        explanation: "تأثير دوبلر يستخدم في أجهزة الرادار لضبط سرعة السيارات ورصد النجوم والقياسات الطبية."
+                    },
+                    {
+                        id: 52,
+                        question: "الانزياح نحو الأزرق (Blue Shift) للضوء يحدث عندما يكون المصدر والمراقب:",
+                        options: ["يتحركان مبتعدين", "يتحركان مقتربين", "في وضع ثبات", "يدوران في خط متوازٍ"],
+                        correct: 1,
+                        explanation: "الاقتراب يقلل الطول الموجي وينزاح الطيف نحو الطرف الأزرق البنفسجي."
+                    },
+                    {
+                        id: 53,
+                        question: "كم استغرق ضوء الشمس للوصول إلى الأرض إذا كانت المسافة بينهما 1.5 × 10¹¹ m؟",
+                        options: ["8 دقائق تقريبًا (500 ثانية)", "1 ثانية", "10 ساعات", "سنة كاملة"],
+                        correct: 0,
+                        explanation: "الزمن t = d / c = (1.5×10¹¹) / (3×10⁸) = 500 ثانية ≈ 8.3 دقيقة."
+                    },
+                    {
+                        id: 54,
+                        question: "إذا تزايدت سرعة ابتعاد مجرة عن الأرض، فإن الانزياح نحو الأحمر لأطيافها سوف:",
+                        options: ["يزداد", "يقل", "يبقى ثابتاً", "ينعدم"],
+                        correct: 0,
+                        explanation: "كلما زادت سرعة الابتعاد v، زادت قيمة Δλ مما يزيد الانزياح نحو الأحمر."
+                    },
+                    {
+                        id: 55,
+                        question: "وحدة قياس السرعة النسبية v في معادلة دوبلر هي:",
+                        options: ["m/s", "nm", "Hz", "lx"],
+                        correct: 0,
+                        explanation: "السرعة يقاس مقدارها بالمتار في الثانية m/s."
+                    },
+                    {
+                        id: 56,
+                        question: "ضوء طوله الموجي 500nm، تردد هذا الضوء يساوي:",
+                        options: ["6 × 10¹⁴ Hz", "1.5 × 10¹⁴ Hz", "3 × 10⁸ Hz", "5 × 10¹² Hz"],
+                        correct: 0,
+                        explanation: "f = c / λ = (3×10⁸) / (500×10⁻⁹) = 6×10¹⁴ هرتز."
+                    },
+                    {
+                        id: 57,
+                        question: "أي الخصائص التالية للضوء لا تتغير عند انتقاله بين وسطين شفافين مختلفين؟",
+                        options: ["السرعة", "الطول الموجي", "التردد", "الاتجاه"],
+                        correct: 2,
+                        explanation: "التردد f خاصية ثابتة للمصدر المضيء ولا يتغير بتغير الوسط."
+                    },
+                    {
+                        id: 58,
+                        question: "السنة الضوئية تعادل بالامتار تقريباً:",
+                        options: ["9.46 × 10¹⁵ m", "3 × 10⁸ m", "1.5 × 10¹¹ m", "10¹² m"],
+                        correct: 0,
+                        explanation: "المسافة = السرعة × الزمن بالثواني لعام كامل = 3×10⁸ × (365.25 × 24 × 3600) ≈ 9.46 × 10¹⁵ م."
+                    },
+                    {
+                        id: 59,
+                        question: "إذا كان مصدر الضوء والمراقب يتحركان بالسرعة نفسها وفي نفس الاتجاه، فإن إزاحة دوبلر تكون:",
+                        options: ["صفرًا", "عظمى", "موجبة دائماً", "سالبة دائماً"],
+                        correct: 0,
+                        explanation: "لأن السرعة النسبية بينهما v = 0 وبالتالي Δλ = 0."
+                    },
+                    {
+                        id: 60,
+                        question: "علاقة إزاحة دوبلر بالسرعة النسبية v هي علاقة:",
+                        options: ["طردية خطية", "عكسية", "تربيعية", "لا تعتمد عليها"],
+                        correct: 0,
+                        explanation: "Δλ = (v/c) * λ، تتناسب الإزاحة طردياً وبشكل مباشر مع السرعة النسبية v."
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "الجزء الرابع: استقطاب الضوء وقانون مالوس",
+                description: "الضوء غير المستقطب، مرشحات الاستقطاب، تحليل الضوء، وقانون مالوس I2 = I1 cos²θ.",
+                questions: [
+                    {
+                        id: 61,
+                        question: "الضوء الصادر من المصباح العادي أو الشمس هو ضوء:",
+                        options: ["مستقطب بالكامل", "غير مستقطب يتذبذب في جميع الاتجاهات", "أحادي اللون", "مترابط"],
+                        correct: 1,
+                        explanation: "الضوء الطبيعي يتذبذب في اتجاهات ومستويات عشوائية متعددة عمودية على اتجاه الانتشار."
+                    },
+                    {
+                        id: 62,
+                        question: "عند مرور ضوء غير مستقطب عبر مرشح استقطاب واحد (المحور رأسي)، فإن شدة الضوء النافذ تنخفض إلى:",
+                        options: ["100%", "75%", "50%", "25%"],
+                        correct: 2,
+                        explanation: "مرشح الاستقطاب الأول يحجب نصف الضوء غير المستقطب تماماً فتصبح شدته I1 = I0 / 2."
+                    },
+                    {
+                        id: 63,
+                        question: "قانون مالوس لحساب شدة الضوء الخارج من مرشح الاستقطاب الثاني يُعبر عنه بـ:",
+                        options: ["I₂ = I₁ cos²θ", "I₂ = I₁ sin²θ", "I₂ = I₁ / cosθ", "I₂ = I₁ tanθ"],
+                        correct: 0,
+                        explanation: "قانون مالوس ينص على أن: I₂ = I₁ cos²θ حيث θ هي الزاوية بين محوري الاستقطاب."
+                    },
+                    {
+                        id: 64,
+                        question: "إذا كانت الزاوية بين محوري استقطاب مرشحين تساوي 90° (متعامدين)، فإن شدة الضوء النافذ تكون:",
+                        options: ["أكبر ما يمكن", "نصف الشدة", "صفرًا (ينحجب الضوء تماماً)", "75%"],
+                        correct: 2,
+                        explanation: "لأن cos(90°) = 0، وبالتالي تكون I₂ = I₁ × (0)² = 0."
+                    },
+                    {
+                        id: 65,
+                        question: "إذا كانت الزاوية بين محوري الاستقطاب θ = 0° (متوازيين)، فإن الضوء النافذ عبر المرشح الثاني يكون:",
+                        options: ["صفرًا", "ينفذ بأقصى شدة ممكنة I₁", "ينخفض للنصف", "ينخفض للربع"],
+                        correct: 1,
+                        explanation: "لأن cos(0°) = 1، وتكون الشدة I₂ = I₁."
+                    },
+                    {
+                        id: 66,
+                        question: "يحدث استقطاب الضوء بالانعكاس عندما ينعكس الضوء عن سطح عازل عند زاوية معينة تُسمى زاوية:",
+                        options: ["الانكسار", "الحرج", "بروستر (Brewster)", "الحيود"],
+                        correct: 2,
+                        explanation: "زاوية بروستر هي الزاوية التي يكون عندها الشعاع المنعكس مستقطباً كلياً."
+                    },
+                    {
+                        id: 67,
+                        question: "النظارات الشمسية المستقطبة تُصمم بمحاور استقطاب رأسية للحد من الوهج الناجم عن الانعكاس من السطوح الأفقية مثل:",
+                        options: ["الماء والطرق الأسفلتية", "السحب", "السماء", "المصابيح"],
+                        correct: 0,
+                        explanation: "الضوء المنعكس عن السطوح الأفقية (كالماء) يكون مستقطباً أفقياً، لذا تمتص المرشحات الرأسية هذا الوهج."
+                    },
+                    {
+                        id: 68,
+                        question: "إذا كانت الزاوية بين مرشحي الاستقطاب θ = 60°، فإن الشدة النافذة I₂ تساوي:",
+                        options: ["0.5 I₁", "0.25 I₁", "0.75 I₁", "0.1 I₁"],
+                        correct: 1,
+                        explanation: "cos(60°) = 0.5، ومر مربع القيمة (0.5)² = 0.25، فتصبح I₂ = 0.25 I₁."
+                    },
+                    {
+                        id: 69,
+                        question: "يمكن توضيح المفهوم الموجي للضوء وإثبات أن موجات الضوء مستعرضة من خلال ظاهرة:",
+                        options: ["الانعكاس", "الانكسار", "الاستقطاب", "التداخل"],
+                        correct: 2,
+                        explanation: "الاستقطاب لا يحدث إلا للموجات المستعرضة فقط، مما يثبت أن الضوء موجة مستعرضة."
+                    },
+                    {
+                        id: 70,
+                        question: "تستخدم مرشحات الاستقطاب في كاميرات التصوير الفوتوغرافي لـ:",
+                        options: ["تقليل الانعكاسات وزيادة تباين السماء والغيوم", "تكبير الصورة", "تسريع التقاط الصور", "تغيير الألوان إلى الأبيض والأسود"],
+                        correct: 0,
+                        explanation: "تساعد مرشحات الاستقطاب على التخلص من الوهج الضوئي وزيادة تشبع الألوان والتباين."
+                    },
+                    {
+                        id: 71,
+                        question: "الموجات الطولية مثل موجات الصوت:",
+                        options: ["يمكن استقطابها بسهولة", "لا يمكن استقطابها", "تستقطب بالانعكاس فقط", "تستقطب بالانكسار"],
+                        correct: 1,
+                        explanation: "الموجات الطولية تتذبذب في اتجاه انتشار الموجة نفسه ولذا لا تقبل الاستقطاب."
+                    },
+                    {
+                        id: 72,
+                        question: "المرشح الذي يتكون من جزيئات سلسلة طويلة من الهيدروكربونات الممتدة يُسمى مرشح:",
+                        options: ["بولاراويد (Polaroid)", "عدسي", "منشوري", "مقعر"],
+                        correct: 0,
+                        explanation: "مرشحات البولاراويد تعتمد على سلاسل الجزيئات الطويلة لامتصاص الضوء في اتجاه معين."
+                    },
+                    {
+                        id: 73,
+                        question: "عند وضع مرشح استقطاب ثالث بزاوية 45° بين مرشحين متعامدين (90°)، فإن الضوء النافذ:",
+                        options: ["يبقى صفرًا", "ينفذ جزء منه مرة أخرى!", "يمتص بالكامل", "يتضاعف"],
+                        correct: 1,
+                        explanation: "المرشح الأوسط يغير اتجاه تذبذب الضوء، مما يسمح بمرور نسبة من الضوء عبر المرشح الأخير."
+                    },
+                    {
+                        id: 74,
+                        question: "زاوية الاستقطاب بالانعكاس تحسب من العلاقة tan(θ_p) = :",
+                        options: ["n₂ / n₁", "n₁ / n₂", "sin(i)", "cos(r)"],
+                        correct: 0,
+                        explanation: "قانون بروستر: tan(θ_p) = n₂ / n₁ حيث n هو معامل الانكسار."
+                    },
+                    {
+                        id: 75,
+                        question: "تطبيق تجاري شائع يستعمل تقنية شاشات السائل الكريستالي المستقطب (LCD):",
+                        options: ["التلفزيونات والساعات الرقمية والهواتف", "السخانات الشمسية", "المصابيح الزئبقية", "المجاهر الضوئية"],
+                        correct: 0,
+                        explanation: "شاشات LCD تعتمد كلياً على التحكم في اتجاه استقطاب الضوء بواسطة البلورات السائلة."
+                    },
+                    {
+                        id: 76,
+                        question: "إذا كانت cos(θ) = 0.707 (أي θ = 45°)، فإن نسبة الضوء النافذ عبر المرشح الثاني وفق قانون مالوس تكون:",
+                        options: ["50%", "25%", "70.7%", "100%"],
+                        correct: 0,
+                        explanation: "I₂/I₁ = cos²(45°) = (0.707)² = 0.5 أي 50%."
+                    },
+                    {
+                        id: 77,
+                        question: "الخاصية التي تميز موجات الضوء الكهرومغناطيسية عن موجات الصوت هي إمكانية إحداث:",
+                        options: ["التداخل", "الحيود", "الاستقطاب", "الانعكاس"],
+                        correct: 2,
+                        explanation: "لأن الضوء موجات مستعرضة كهرومغناطيسية يمكن استقطابها بخلاف الصوت."
+                    },
+                    {
+                        id: 78,
+                        question: "تعتمد طريقة الاستقطاب بالتشتت في الغلاف الجوي على تشتت الضوء ذو الطول الموجي:",
+                        options: ["الطويل كال أحمر", "القصير كال أزرق", "المتوسط كالأصفر", "لا يعتمد على الطول الموجي"],
+                        correct: 1,
+                        explanation: "جزيئات الهواء تشتت الضوء الأزرق ذو الأطوال الموجية القصيرة بدرجة أكبر بكثير."
+                    },
+                    {
+                        id: 79,
+                        question: "ضوء غير مستقطب شدته I₀ سقط على مرشح استقطاب، كم تكون شدته بعد النفاذ؟",
+                        options: ["I₀", "I₀ / 2", "I₀ / 4", "صفر"],
+                        correct: 1,
+                        explanation: "المرشح الأول يقلل شدة الضوء غير المستقطب للنصف دائماً."
+                    },
+                    {
+                        id: 80,
+                        question: "يكون الضوء المنعكس مستقطباً بالكامل إذا كانت الزاوية بين الشعاع المنعكس والشعاع المنكسر تساوي:",
+                        options: ["45°", "60°", "90°", "180°"],
+                        correct: 2,
+                        explanation: "عند زاوية بروستر تكون الزاوية بين الشعاعين المنعكس والمنكسر قائمة (90°)."
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "الجزء الخامس: قانون التربيع العكسي والتدفق الضوئي",
+                description: "تطبيقات الحسابات الرياضية للاستضاءة والتدفق الضوئي وشدة الإضاءة.",
+                questions: [
+                    {
+                        id: 81,
+                        question: "مصدر ضوئي نقطي تدفقه الضوئي 400π lm يقع في مركز كره نصف قطرها 2m، تكون الاستضاءة على سطحها الداخلي:",
+                        options: ["25 lx", "50 lx", "100 lx", "200 lx"],
+                        correct: 0,
+                        explanation: "E = P / (4πr²) = (400π) / (4π × 2²) = 400π / 16π = 25 lux."
+                    },
+                    {
+                        id: 82,
+                        question: "ما التدفق الضوئي P لمصباح يستضيء بلمسافة 3m بشدة استضاءة قدرها 40 lx؟",
+                        options: ["1440π lm", "360π lm", "120π lm", "480π lm"],
+                        correct: 0,
+                        explanation: "P = E × 4πr² = 40 × 4π × (3)² = 40 × 36π = 1440π lm."
+                    },
+                    {
+                        id: 83,
+                        question: "إذا وضعت شاشة على بعد 4m من مصباح ضوئي، ثم تحركت لتصبح على بعد 2m من المصباح، فإن الاستضاءة:",
+                        options: ["تزداد إلى الضعف", "تزداد إلى 4 أضعاف", "تقل للنصف", "تقل للربع"],
+                        correct: 1,
+                        explanation: "تقل المسافة للنصف (1/2)، وتزداد الاستضاءة بمقدار عكس مربع المسافة: (1 / (1/2)²) = 4 أضعاف."
+                    },
+                    {
+                        id: 84,
+                        question: "شدة الإضاءة I تساوي التدفق الضوئي مقسومًا على السطح الكروي وتُقاس بوحدة:",
+                        options: ["اللوكس", "الكانديلا (cd) أو الشمعة", "الواط", "الجول"],
+                        correct: 1,
+                        explanation: "تقاس شدة الإضاءة (Luminous Intensity) بوحدة الشمعة أو الكانديلا (cd)."
+                    },
+                    {
+                        id: 85,
+                        question: "مصباح كهربائي مكتوب عليه 100W وتدفق ضوئي 1200lm، كم تبلغ كفاءته الضوئية؟",
+                        options: ["12 lm/W", "120 lm/W", "1.2 lm/W", "1200 lm/W"],
+                        correct: 0,
+                        explanation: "الكفاءة الضوئية = التدفق الضوئي / القدرة الكهربائية = 1200 / 100 = 12 lm/W."
+                    },
+                    {
+                        id: 86,
+                        question: "افترض أن استضاءة مصباح على مكتبك هي 100 lx على بعد 2m، كم تكون الاستضاءة إذا وضع المصباح على بعد 1m؟",
+                        options: ["200 lx", "400 lx", "50 lx", "25 lx"],
+                        correct: 1,
+                        explanation: "نصف المسافة يعطي أربعة أضعاف الاستضاءة: 100 × 4 = 400 lux."
+                    },
+                    {
+                        id: 87,
+                        question: "إذا كان التدفق الضوئي لمصدر ثابتًا، فإن العلاقة بين الاستضاءة E ومربع البعد r² هي علاقة:",
+                        options: ["طردية", "عكسية", "ثابتة", "جذرية"],
+                        correct: 1,
+                        explanation: "قانون التربيع العكسي ينص على أن الاستضاءة تتناسب عكسياً مع مربع البعد."
+                    },
+                    {
+                        id: 88,
+                        question: "لزيادة استضاءة سطح بمقدار 9 أضعاف، يجب تقليل المسافة بينه وبين المصدر إلى:",
+                        options: ["الثلث (1/3)", "النصف (1/2)", "التسع (1/9)", "الربع (1/4)"],
+                        correct: 0,
+                        explanation: "بما أن E ∝ 1/r²، فإن جعل المسافة r/3 يجعل الاستضاءة 1 / (1/3)² = 9 E."
+                    },
+                    {
+                        id: 89,
+                        question: "سطح مساحته 2 m² يتلقى تدفقًا ضوئيًا قدره 200 lm بشكل عمودي، الاستضاءة المتوسطة عليه تساوي:",
+                        options: ["100 lx", "400 lx", "200 lx", "50 lx"],
+                        correct: 0,
+                        explanation: "الاستضاءة = التدفق الضوئي / المساحة = 200 / 2 = 100 lux."
+                    },
+                    {
+                        id: 90,
+                        question: "مصدر ضوئي قدرته 80 cd، كم التدفق الضوئي الصادر منه؟",
+                        options: ["320π lm", "80π lm", "160π lm", "40π lm"],
+                        correct: 0,
+                        explanation: "P = 4π × I = 4π × 80 = 320π lm."
+                    },
+                    {
+                        id: 91,
+                        question: "تنطبق قاعدة التربيع العكسي للاستضاءة بشرط أن يكون المصدر الضوئي:",
+                        options: ["مصدرًا نقطيًا وسقوط الضوء عموديًا", "مصدرًا ممتدًا شاسعًا", "مصدر أفقياً فقط", "متذبذباً"],
+                        correct: 0,
+                        explanation: "يشترط أن يكون المصدر صغيرًا جدًا (نقطيًا) وسقوط الأشعة عموديًا على السطح."
+                    },
+                    {
+                        id: 92,
+                        question: "أي التالي لا يُعد وحدة قياس للكميات الضوئية؟",
+                        options: ["اللوكس", "اللومن", "الكانديلا", "الأمبير"],
+                        correct: 3,
+                        explanation: "الأمبير وحدة قياس شدة التيار الكهربائي وليس الكميات الضوئية."
+                    },
+                    {
+                        id: 93,
+                        question: "إذا سقط الضوء بزاوية مائلة على سطح، فإن استضاءة السطح مقارنة بالسقوط العمودي تكون:",
+                        options: ["أكبر", "أقل", "متساوية", "تتضاعف"],
+                        correct: 1,
+                        explanation: "تقل الاستضاءة عند ميل السطح وتتناسب مع تمام زاوية السقوط (cos θ)."
+                    },
+                    {
+                        id: 94,
+                        question: "ما مقدار استضاءة سطح يبعد 3m أسفل مصباح تدفقه الضوئي 3600 lm؟",
+                        options: ["100/π lx", "300/π lx", "1200/π lx", "400/π lx"],
+                        correct: 0,
+                        explanation: "E = 3600 / (4 × π × 3²) = 3600 / (36π) = 100/π lux."
+                    },
+                    {
+                        id: 95,
+                        question: "الكانديلا (cd) هي وحدة القياس الأساسية لـ:",
+                        options: ["شدة الإضاءة", "التدفق الضوئي", "الاستضاءة", "الطول الموجي"],
+                        correct: 0,
+                        explanation: "الكانديلا هي إحدى الوحدات الأساسية السبع في النظام الدولي لقياس شدة الإضاءة."
+                    },
+                    {
+                        id: 96,
+                        question: "الشمس تُعتبر بالنسبة للأرض مصدرًا ضوئيًا:",
+                        options: ["نقطيًا تقريبًا لكبر المسافة", "ممتدًا قريبًا جداً", "معتمًا", "مستضيئًا"],
+                        correct: 0,
+                        explanation: "رغم كبر حجم الشمس إلا أنه لكبر المسافة بينها وبين الأرض تُعامل كمصدر نقطي تقريباً."
+                    },
+                    {
+                        id: 97,
+                        question: "العلاقة بين التدفق الضوئي P والاستضاءة E عند ثبات المسافة هي علاقة:",
+                        options: ["طردية خطية", "عكسية", "تربيعية", "عكسية تربيعية"],
+                        correct: 0,
+                        explanation: "زيادة التدفق الضوئي للمصباح تزيد استضاءة السطح بنسبة طردية مباشرة."
+                    },
+                    {
+                        id: 98,
+                        question: "رمز الاستضاءة في الفيزياء هو:",
+                        options: ["E", "P", "I", "c"],
+                        correct: 0,
+                        explanation: "يرمز للاستضاءة بالرمز E (Illuminance)."
+                    },
+                    {
+                        id: 99,
+                        question: "رمز التدفق الضوئي في قوانين الضوء هو:",
+                        options: ["P", "E", "f", "λ"],
+                        correct: 0,
+                        explanation: "يرمز للتدفق الضوئي بالرمز P (Luminous Flux)."
+                    },
+                    {
+                        id: 100,
+                        question: "عند زوال المصدر المضيء من الغرفة، يحدث للضوء المنتشر بها:",
+                        options: ["اختفاء فوري متناهي السرعة", "يبقى معلقاً في الهواء", "يتراكم على الجدران", "يستمر في التكرار"],
+                        correct: 0,
+                        explanation: "لأن الضوء يسير بسرعات هائلة جداً ويمتص في الأسطح والمواد فوراً."
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: "الجزء السادس: مراجعة شاملة ومستويات عليا",
+                description: "أسئلة مراجعة عامة ومتقدمة في كافة مفاهيم وتطبيقات الفصل الرابع (أساسيات الضوء).",
+                questions: [
+                    {
+                        id: 101,
+                        question: "نموذج الشعاع الضوئي يُمثل الضوء على شكل شعاع يسير في خطوط:",
+                        options: ["مستقيمة", "منحنية", "دائرية", "حلزونية"],
+                        correct: 0,
+                        explanation: "ينص النموذج الشعاعي للضوء على أن الضوء ينتقل في خطوط مستقيمة ويتغير اتجاهه فقط عند التفاعل مع المواد."
+                    },
+                    {
+                        id: 102,
+                        question: "العالم الذي أثبت أن الضوء ينعكس بانكسارات محددة ووضع كتاب المناظر هو:",
+                        options: ["الحسن بن الهيثم", "ابن سينا", "الخوارزمي", "البيروني"],
+                        correct: 0,
+                        explanation: "الحسن بن الهيثم هو مؤسس علم البصريات ومؤلف كتاب المناظر الشهير."
+                    },
+                    {
+                        id: 103,
+                        question: "من الأدلة على أن الضوء يمتلك سلوكاً موجياً ظاهرة:",
+                        options: ["التداخل والحيود والاستقطاب", "الانعكاس المنتظم فقط", "الظل والنور", "الانتشار في خطوط مستقيمة"],
+                        correct: 0,
+                        explanation: "ظواهر التداخل والحيود والاستقطاب أثبتت بلا شك الطبيعة الموجية للضوء."
+                    },
+                    {
+                        id: 104,
+                        question: "عند سقوط ضوء أبيض على منشور زجاجي، يكون اللون الأكثر انحرافًا وانكسارًا هو:",
+                        options: ["البنفسجي", "الأحمر", "الأصفر", "الأخضر"],
+                        correct: 0,
+                        explanation: "الضوء البنفسجي ذو أقصر طول موجي وأعلى معامل انكسار ولذا ينحرف بدرجة أكبر."
+                    },
+                    {
+                        id: 105,
+                        question: "اللون الأقل انحرافًا عند تحلل الضوء الأبيض بالمنشور هو:",
+                        options: ["الأحمر", "البنفسجي", "الأزرق", "البرتقالي"],
+                        correct: 0,
+                        explanation: "الضوء الأحمر يملك أكبر طول موجي وينكسر بأقل زاوية انحراف."
+                    },
+                    {
+                        id: 106,
+                        question: "إذا وُضع جسم بين مرشحي استقطاب متعامدين تماماً، فلن يمر أي ضوء. ماذا يحدث لو أدرنا أحدهما ببطء حتى 90 درجة؟",
+                        options: ["تتغير الشدة تدريجياً من الصفر إلى القيمة العظمى وفق قانون مالوس", "يبقى مظلماً", "ينفجر المرشح", "تثبت الشدة"],
+                        correct: 0,
+                        explanation: "تتغير شدة الضوء مع تغير الزاوية وتزداد كلما اقتربت الزاوية من التوازي (0°)."
+                    },
+                    {
+                        id: 107,
+                        question: "تُستخدم الألوان المتممة في تقنيات التصوير والطباعة لـ:",
+                        options: ["إلغاء ألوان معينة وإنتاج اللون الأبيض أو الأسود", "زيادة التكلفة", "إضعاف الإضاءة", "تقليل الدقة"],
+                        correct: 0,
+                        explanation: "الألوان المتممة تُستخدم لمعادلة الألوان وتصحيح التباين والطباعة."
+                    },
+                    {
+                        id: 108,
+                        question: "أي من الكميات الفيزيائية التالية تُعد قياسية وغير اتجاهية؟",
+                        options: ["التدفق الضوئي والتدفق الاستضائي", "السرعة المتجهة", "الإزاحة", "القوة"],
+                        correct: 0,
+                        explanation: "التدفق الضوئي P والاستضاءة E كميات قياسية تُحدد بالمقدار والوحدة فقط."
+                    },
+                    {
+                        id: 109,
+                        question: "الأطياف الذرية للعناصر تُدرس بدقة عبر قياس انزياح دوبلر لتحديد:",
+                        options: ["حركة النجوم وسرعتها النسبية باتجاهنا أو بعيداً عنا", "شكل النجم الخارجي", "عمر التلسكوب", "درجة حرارة الأرض"],
+                        correct: 0,
+                        explanation: "تحليل انزياح الخطوط الطيفية يحدد السرعة الاتجاهية للأجرام السماوية."
+                    },
+                    {
+                        id: 110,
+                        question: "السطح المعتم هو السطح الذي:",
+                        options: ["يمتص الضوء أو يعكسه ولا يمرره إطلاقاً", "يمرر جزءاً من الضوء", "ينقل الضوء كاملاً", "يولّد الضوء بنفسه"],
+                        correct: 0,
+                        explanation: "المواد المعتمة مثل الخشب والمعادن لا تسمح بنفاذ الضوء من خلالها."
+                    },
+                    {
+                        id: 111,
+                        question: "الزجاج الخشن أو الورق المزين يُعتبر مثالاً للمواد:",
+                        options: ["شبه الشفافة", "الشفافة تماماً", "المعتمة", "المستقطبة"],
+                        correct: 0,
+                        explanation: "المواد شبه الشفافة تنقل الضوء ولكن لا تسمح برؤية الأجسام بوضوح عبرها."
+                    },
+                    {
+                        id: 112,
+                        question: "سرعة الضوء في الوسط المادي المقارنة بسرعته في الفراغ تكون:",
+                        options: ["أقل دائماً", "أكبر دائماً", "مساوية دائماً", "ضعف السرعة"],
+                        correct: 0,
+                        explanation: "تتباعد وتتأثر موجات الضوء بالتفاعل مع ذرات الوسط الشفاف فتقل سرعتها v < c."
+                    },
+                    {
+                        id: 113,
+                        question: "تشتت ضوء الشمس في الغلاف الجوي يجعل السماء تظهر باللون الأزرق نهاراً والشفق باللون:",
+                        options: ["الأحمر البرتقالي عند الغروب", "الأخضر", "الأصفر الفاقع", "الوردي"],
+                        correct: 0,
+                        explanation: "عند الغروب تقطع أشعة الشمس مسافة أطول في الغلاف الجوي، فتتشتت الأطوال الموجية القصيرة ويبقى الأحمر."
+                    },
+                    {
+                        id: 114,
+                        question: "الصيغة Math المعبرة عن الاستضاءة E هي:",
+                        options: ["E = P / (4πr²)", "E = 4πr² / P", "E = P × r²", "E = P / r"],
+                        correct: 0,
+                        explanation: "القانون الأساسي للاستضاءة المباشرة العمودية من مصدر نقطي."
+                    },
+                    {
+                        id: 115,
+                        question: "إذا زاد تردد موجة ضوئية، فإن طولها الموجي في الفراغ:",
+                        options: ["يقل بنفس النسبة", "يزداد", "يبقى ثابتاً", "يتضاعف"],
+                        correct: 0,
+                        explanation: "لأن حاصل ضربهما يمثل ثابتاً وهو سرعة الضوء (c = f × λ)."
+                    },
+                    {
+                        id: 116,
+                        question: "أي الموجات التالية تعتبر موجات كهرومغناطيسية ولها نفس سرعة الضوء المرئي؟",
+                        options: ["الأشعة السينية وموجات الراديو والأشعة تحت الحمراء", "موجات الصوت", "موجات الماء", "موجات الزلازل"],
+                        correct: 0,
+                        explanation: "جميع أجزاء الطيف الكهرومغناطيسي تنتقل في الفراغ بسرعه الضوء c."
+                    },
+                    {
+                        id: 117,
+                        question: "مرشحان للاستقطاب الزاوية بينهما 30°، كم نسبة الشدة النافذة مقارنة بالداخلة للمرشح الثاني؟",
+                        options: ["75%", "50%", "25%", "100%"],
+                        correct: 0,
+                        explanation: "cos(30°) = √3/2 ≈ 0.866. ومربع القيمة (0.866)² = 0.75 أي 75%."
+                    },
+                    {
+                        id: 118,
+                        question: "المرشح الأول يحول الضوء غير المستقطب إلى ضوء:",
+                        options: ["مستقطب خطيًا", "دائري غير مستقطب", "عشوائي", "منكسر"],
+                        correct: 0,
+                        explanation: "ينفذ فقط المكونات المتوازية مع محور الاستقطاب مما يجعله مستقطباً خطياً."
+                    },
+                    {
+                        id: 119,
+                        question: "عند دمج ضوء أصفر مع ضوء أزرق ينتج الضوء الأبيض، ولذا يسمى هذان اللونان بـ:",
+                        options: ["اللونين المتممين", "اللونين الأساسيين", "اللونين الثانويين", "اللونين المعتين"],
+                        correct: 0,
+                        explanation: "أي لونين ضوئيين يُنتج تركبيبهما الضوء الأبيض يسمى لونين متكاملين أو متممين."
+                    },
+                    {
+                        id: 120,
+                        question: "قام بعرض نموذج رياضي متكامل للكهرباء والمغناطيسية والضوء واثبت أن الضوء موجة كهرومغناطيسية العالم:",
+                        options: ["ماكسويل (Maxwell)", "نيوتن", "كبلر", "أينشتاين"],
+                        correct: 0,
+                        explanation: "العالم جيمس كلارك ماكسويل استنتج نظرية الكهرومغناطيسية وأثبت أن الضوء موجات كهرومغناطيسية."
+                    }
+                ]
+            }
+        ];
+
+        // State Management
+        let currentPartIndex = 0;
+        let userAnswers = {}; // Store answers key: `${partId}_${qId}` -> selectedOptionIndex
+
+        // Initialize App
+        window.onload = function() {
+            renderTabs();
+            loadPart(0);
+            updateGlobalStats();
+        };
+
+        // Render Navigation Tabs
+        function renderTabs() {
+            const container = document.getElementById('partsTabContainer');
+            container.innerHTML = '';
+
+            quizParts.forEach((part, index) => {
+                const btn = document.createElement('button');
+                btn.className = `px-5 py-3 rounded-xl font-bold text-xs sm:text-sm transition duration-200 flex items-center gap-2 ${
+                    index === currentPartIndex
+                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-900 shadow-lg font-extrabold'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                }`;
+                btn.innerHTML = `<i class="fa-solid ${index === 0 ? 'fa-star text-amber-300' : 'fa-layer-group'}"></i> ${part.title.split(':')[0]}`;
+                btn.onclick = () => {
+                    currentPartIndex = index;
+                    renderTabs();
+                    loadPart(index);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // Load Quiz Part Questions
+        function loadPart(index) {
+            const part = quizParts[index];
+            document.getElementById('currentPartTitle').innerHTML = `<i class="fa-solid fa-atom text-cyan-400"></i> ${part.title}`;
+            document.getElementById('currentPartDesc').innerText = part.description;
+            document.getElementById('partQuestionCount').innerText = part.questions.length;
+
+            updatePartScoreDisplay(part);
+
+            const quizContainer = document.getElementById('quizContainer');
+            quizContainer.innerHTML = '';
+
+            part.questions.forEach((q, qIdx) => {
+                const questionKey = `${part.id}_${q.id}`;
+                const hasAnswered = userAnswers.hasOwnProperty(questionKey);
+                const selectedOption = userAnswers[questionKey];
+
+                const card = document.createElement('div');
+                card.className = "glass-panel p-6 rounded-3xl border border-slate-700/60 relative transition duration-300 hover:border-slate-600";
+
+                let optionsHtml = '';
+                q.options.forEach((opt, optIdx) => {
+                    let optionClass = "w-full text-right p-4 rounded-2xl font-bold text-sm border transition duration-200 flex justify-between items-center cursor-pointer ";
+                    let badgeIcon = '';
+
+                    if (hasAnswered) {
+                        if (optIdx === q.correct) {
+                            optionClass += "bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-md shadow-emerald-500/10";
+                            badgeIcon = '<i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>';
+                        } else if (optIdx === selectedOption) {
+                            optionClass += "bg-rose-500/20 border-rose-500 text-rose-300";
+                            badgeIcon = '<i class="fa-solid fa-circle-xmark text-rose-400 text-lg"></i>';
+                        } else {
+                            optionClass += "bg-slate-900/40 border-slate-800 text-slate-500 opacity-60";
+                        }
+                    } else {
+                        optionClass += "bg-slate-900/60 border-slate-800 text-slate-300 hover:border-cyan-500/50 hover:bg-slate-800/80 hover:text-white";
+                        badgeIcon = `<span class="w-6 h-6 rounded-full border border-slate-600 flex items-center justify-center text-xs font-semibold text-slate-400">${String.fromCharCode(65 + optIdx)}</span>`;
+                    }
+
+                    optionsHtml += `
+                        <button onclick="selectOption(${part.id}, ${q.id}, ${optIdx})" ${hasAnswered ? 'disabled' : ''} class="${optionClass}">
+                            <span>${opt}</span>
+                            ${badgeIcon}
+                        </button>
+                    `;
+                });
+
+                let explanationHtml = '';
+                if (hasAnswered) {
+                    explanationHtml = `
+                        <div class="mt-4 p-4 rounded-2xl bg-cyan-950/40 border border-cyan-800/50 text-cyan-200 text-xs sm:text-sm leading-relaxed flex items-start gap-3">
+                            <i class="fa-solid fa-circle-info text-cyan-400 text-base mt-0.5"></i>
+                            <div>
+                                <span class="font-bold text-cyan-300 block mb-1">التغذية الراجعة والشرح الفيزيائي:</span>
+                                ${q.explanation}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                        <span class="px-3 py-1 rounded-xl bg-cyan-500/10 text-cyan-400 font-extrabold text-xs border border-cyan-500/20">
+                            سؤال ${qIdx + 1} من ${part.questions.length}
+                        </span>
+                        ${hasAnswered ? (selectedOption === q.correct 
+                            ? '<span class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-check"></i> إجابة صحيحة</span>' 
+                            : '<span class="text-xs font-bold text-rose-400 flex items-center gap-1"><i class="fa-solid fa-xmark"></i> إجابة خاطئة</span>') 
+                            : ''}
+                    </div>
+                    <h3 class="text-base sm:text-lg font-bold text-white mb-5 leading-snug">${q.question}</h3>
+                    <div class="space-y-3">
+                        ${optionsHtml}
+                    </div>
+                    ${explanationHtml}
+                `;
+
+                quizContainer.appendChild(card);
+            });
+        }
+
+        // Handle Option Selection
+        function selectOption(partId, questionId, optionIndex) {
+            const key = `${partId}_${questionId}`;
+            userAnswers[key] = optionIndex;
+
+            loadPart(currentPartIndex);
+            updateGlobalStats();
+        }
+
+        // Update Part Score Display
+        function updatePartScoreDisplay(part) {
+            let correctCount = 0;
+            part.questions.forEach(q => {
+                const key = `${part.id}_${q.id}`;
+                if (userAnswers[key] === q.correct) {
+                    correctCount++;
+                }
+            });
+            document.getElementById('partScoreDisplay').innerText = `${correctCount} / ${part.questions.length}`;
+        }
+
+        // Global Statistics
+        function updateGlobalStats() {
+            let totalQuestions = 0;
+            let answeredCount = 0;
+            let correctCount = 0;
+
+            quizParts.forEach(part => {
+                totalQuestions += part.questions.length;
+                part.questions.forEach(q => {
+                    const key = `${part.id}_${q.id}`;
+                    if (userAnswers.hasOwnProperty(key)) {
+                        answeredCount++;
+                        if (userAnswers[key] === q.correct) {
+                            correctCount++;
+                        }
+                    }
+                });
+            });
+
+            const wrongCount = answeredCount - correctCount;
+            const percentage = answeredCount > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+
+            document.getElementById('totalAnswered').innerText = `${answeredCount} / ${totalQuestions}`;
+            document.getElementById('totalCorrect').innerText = correctCount;
+            document.getElementById('totalWrong').innerText = wrongCount;
+            document.getElementById('totalPercentage').innerText = `${percentage}%`;
+        }
+
+        // Reset Current Part
+        function resetCurrentPart() {
+            const part = quizParts[currentPartIndex];
+            part.questions.forEach(q => {
+                delete userAnswers[`${part.id}_${q.id}`];
+            });
+            loadPart(currentPartIndex);
+            updateGlobalStats();
+        }
+
+        // Reset All Quiz
+        function resetAllQuiz() {
+            userAnswers = {};
+            loadPart(currentPartIndex);
+            updateGlobalStats();
+        }
+
+        // Modal Controls
+        function toggleCalculatorModal() {
+            const modal = document.getElementById('calculatorModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function switchCalcMode(mode) {
+            const illumBtn = document.getElementById('calcIllumBtn');
+            const dopplerBtn = document.getElementById('calcDopplerBtn');
+            const illumForm = document.getElementById('illumForm');
+            const dopplerForm = document.getElementById('dopplerForm');
+
+            if (mode === 'illumination') {
+                illumBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-cyan-500 text-slate-900 shadow";
+                dopplerBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
+                illumForm.classList.remove('hidden');
+                dopplerForm.classList.add('hidden');
+            } else {
+                dopplerBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-cyan-500 text-slate-900 shadow";
+                illumBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white";
+                dopplerForm.classList.remove('hidden');
+                illumForm.classList.add('hidden');
+            }
+        }
+
+        // Illumination Calculator
+        function calculateIllumination() {
+            const P = parseFloat(document.getElementById('calcP').value);
+            const r = parseFloat(document.getElementById('calcR').value);
+            const resDiv = document.getElementById('illumResult');
+
+            if (isNaN(P) || isNaN(r) || r <= 0) {
+                resDiv.classList.remove('hidden');
+                resDiv.className = "p-4 bg-rose-950/80 rounded-2xl border border-rose-800 text-rose-300 text-xs font-bold";
+                resDiv.innerText = "يرجى إدخال قيم صحيحة للتدفق P وللمسافة r (أكبر من 0).";
+                return;
+            }
+
+            const E = P / (4 * Math.PI * Math.pow(r, 2));
+            resDiv.classList.remove('hidden');
+            resDiv.className = "p-4 bg-emerald-950/80 rounded-2xl border border-emerald-800 text-emerald-300 text-xs font-bold leading-relaxed";
+            resDiv.innerHTML = `الاستضاءة E = ${E.toFixed(2)} lx (لوكس)<br><span class="text-slate-400 font-normal">أو بدلالة باي: E = ${(P / (4 * Math.pow(r, 2))).toFixed(2)} / π lx</span>`;
+        }
+
+        // Doppler Calculator
+        function calculateDoppler() {
+            const lambda = parseFloat(document.getElementById('calcLambda').value);
+            const v = parseFloat(document.getElementById('calcV').value);
+            const resDiv = document.getElementById('dopplerResult');
+            const c = 300000000; // 3x10^8 m/s
+
+            if (isNaN(lambda) || isNaN(v)) {
+                resDiv.classList.remove('hidden');
+                resDiv.className = "p-4 bg-rose-950/80 rounded-2xl border border-rose-800 text-rose-300 text-xs font-bold";
+                resDiv.innerText = "يرجى إدخال قيم صحيحة للطول الموجي λ وللسرعة النسبية v.";
+                return;
+            }
+
+            const deltaLambda = (v / c) * lambda;
+            resDiv.classList.remove('hidden');
+            resDiv.className = "p-4 bg-emerald-950/80 rounded-2xl border border-emerald-800 text-emerald-300 text-xs font-bold leading-relaxed";
+            resDiv.innerHTML = `مقدار التغير في الطول الموجي |Δλ| = ${deltaLambda.toFixed(4)} nm<br><span class="text-slate-400 font-normal">عند الابتعاد يزداد الطول الموجي بمقدار (+${deltaLambda.toFixed(4)}nm) وعند الاقتراب يقل بـ (-${deltaLambda.toFixed(4)}nm).</span>`;
+        }
+    </script>
+</body>
+</html>
